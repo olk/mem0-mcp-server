@@ -1,0 +1,82 @@
+# Default configuration values for mem0-mcp-server Helm chart
+# FR-HELM-1: Helm chart with proper templates and values schema
+# IC-HELM-1: Values must include image_repository, image_tag, replica_count, service_type
+
+# Image configuration
+image:
+  repository: mem0-mcp-server
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Replica count for the deployment
+replicaCount: 2
+
+# Service configuration
+service:
+  type: LoadBalancer
+  port: 8080
+  targetPort: 8080
+
+# ServiceAccount configuration
+serviceAccount:
+  create: true
+  name: ""
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: mem0-mcp.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+# Redis dependency configuration
+redis:
+  enabled: true
+  auth:
+    password: ""
+
+# Persistence configuration for data stores
+persistence:
+  chroma:
+    size: 10Gi
+    storageClass: ""  # Empty uses default StorageClass
+  neo4j:
+    size: 20Gi
+    storageClass: ""  # Empty uses default StorageClass
+  minio:
+    size: 50Gi
+    storageClass: ""  # Empty uses default StorageClass
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: "1"
+    memory: 1Gi
+  requests:
+    cpu: "0.5"
+    memory: 512Mi
+
+# Environment variables
+env:
+  LOG_LEVEL: info
+  REDIS_URL: redis://redis-master:6379
+
+# Health probes
+health:
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 5

@@ -1,0 +1,28 @@
+{
+  "config_id": "redis-azure-openai",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "redis",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "redis_url": "redis://localhost:6379"
+  },
+  "llm": {
+    "provider": "azure_openai",
+    "model": "gpt-4o",
+    "temperature": 0.2,
+    "max_tokens": 2000,
+    "azure_api_version": "2024-02-01",
+    "azure_deployment": "your-deployment-name",
+    "azure_endpoint": "https://your-resource.openai.azure.com/"
+  },
+  "embedder": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "dimension": 1536
+  }
+}

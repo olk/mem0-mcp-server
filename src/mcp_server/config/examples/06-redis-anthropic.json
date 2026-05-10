@@ -1,0 +1,27 @@
+{
+  "config_id": "redis-anthropic",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "redis",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "redis_url": "redis://localhost:6379"
+  },
+  "llm": {
+    "provider": "anthropic",
+    "model": "claude-3-5-sonnet-20241022",
+    "temperature": 0.2,
+    "max_tokens": 2000,
+    "top_p": 0.1,
+    "anthropic_base_url": "https://api.anthropic.com"
+  },
+  "embedder": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "dimension": 1536
+  }
+}

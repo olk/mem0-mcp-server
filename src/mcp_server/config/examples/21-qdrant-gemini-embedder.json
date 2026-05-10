@@ -1,0 +1,27 @@
+{
+  "config_id": "qdrant-gemini-embedder",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "qdrant",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "qdrant_url": "https://xxx.qdrant.io",
+    "qdrant_api_key": "your-qdrant-api-key"
+  },
+  "llm": {
+    "provider": "gemini",
+    "model": "gemini-2.0-flash-exp",
+    "temperature": 0.2,
+    "max_tokens": 2000
+  },
+  "embedder": {
+    "provider": "gemini",
+    "model": "models/gemini-embedding-001",
+    "dimension": 1536,
+    "gemini_api_key": "your-google-api-key"
+  }
+}

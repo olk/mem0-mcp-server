@@ -1,0 +1,30 @@
+# Helm chart metadata for mem0-mcp-server
+# FR-HELM-1: Helm chart with proper templates and values schema
+apiVersion: v2
+name: mem0-mcp-server
+description: A Helm chart for Mem0 MCP Server - AI memory layer for persistent memory and personalization
+type: application
+version: 1.0.0
+appVersion: "latest"
+
+keywords:
+  - mem0
+  - mcp
+  - ai
+  - memory
+  - llm
+
+maintainers:
+  - name: Mem0 Team
+    email: team@mem0.ai
+    url: https://github.com/mem0ai/mem0
+
+home: https://github.com/mem0ai/mem0
+sources:
+  - https://github.com/mem0ai/mem0
+
+dependencies:
+  - name: redis
+    version: "17.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled

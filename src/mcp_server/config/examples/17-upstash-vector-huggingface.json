@@ -1,0 +1,27 @@
+{
+  "config_id": "upstash-vector-huggingface",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "upstash_vector",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "upstash_vector_url": "https://xxx.upstash.io",
+    "upstash_vector_token": "your-upstash-token"
+  },
+  "llm": {
+    "provider": "huggingface",
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "temperature": 0.2,
+    "max_tokens": 2000,
+    "huggingface_base_url": "https://api-inference.huggingface.co/v1"
+  },
+  "embedder": {
+    "provider": "huggingface",
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "dimension": 384
+  }
+}

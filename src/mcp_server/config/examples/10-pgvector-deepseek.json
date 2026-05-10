@@ -1,0 +1,29 @@
+{
+  "config_id": "pgvector-deepseek",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "pgvector",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "supabase_connection_string": "postgresql://user:pass@host:5432/dbname",
+    "supabase_index_method": "hnsw",
+    "supabase_index_measure": "cosine_distance"
+  },
+  "llm": {
+    "provider": "deepseek",
+    "model": "deepseek-chat",
+    "temperature": 0.2,
+    "max_tokens": 2000,
+    "top_p": 1.0,
+    "deepseek_base_url": "https://api.deepseek.com"
+  },
+  "embedder": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "dimension": 1536
+  }
+}

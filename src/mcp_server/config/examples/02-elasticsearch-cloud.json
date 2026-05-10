@@ -1,0 +1,26 @@
+{
+  "config_id": "elasticsearch-cloud",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "elasticsearch",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "elasticsearch_cloud_id": "your-deployment:abc123",
+    "elasticsearch_api_key": "your-elasticsearch-api-key"
+  },
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "temperature": 0.2,
+    "max_tokens": 2000
+  },
+  "embedder": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "dimension": 1536
+  }
+}

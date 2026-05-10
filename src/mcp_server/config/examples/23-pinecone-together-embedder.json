@@ -1,0 +1,27 @@
+{
+  "config_id": "pinecone-together-embedder",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "pinecone",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "pinecone_api_key": "your-pinecone-api-key",
+    "pinecone_environment": "us-east-1"
+  },
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "temperature": 0.2,
+    "max_tokens": 2000
+  },
+  "embedder": {
+    "provider": "together",
+    "model": "togethercomputer/m2-bert-80k-8k",
+    "dimension": 1024,
+    "together_api_key": "your-together-api-key"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "config_id": "chroma-vertexai-embedder",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "chroma",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "chroma_path": "/data/chroma"
+  },
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "temperature": 0.2,
+    "max_tokens": 2000
+  },
+  "embedder": {
+    "provider": "vertexai",
+    "model": "textembedding-gecko@003",
+    "dimension": 256,
+    "vertex_credentials_json": "/path/to/credentials.json"
+  }
+}

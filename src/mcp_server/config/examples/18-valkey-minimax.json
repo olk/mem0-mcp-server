@@ -1,0 +1,26 @@
+{
+  "config_id": "valkey-minimax",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "valkey",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "valkey_url": "valkey://localhost:6379",
+    "valkey_index_type": "hnsw"
+  },
+  "llm": {
+    "provider": "minimax",
+    "model": "abab6.5s-chat",
+    "temperature": 0.2,
+    "max_tokens": 2000
+  },
+  "embedder": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "dimension": 1536
+  }
+}

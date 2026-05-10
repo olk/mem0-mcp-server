@@ -1,0 +1,101 @@
+# FR-001: Create docker-compose.yml with services defined in PRD.deployment_specifications.container_orchestration
+# IC-001: Docker Compose configuration for container orchestration
+# AC-001: mem0-mcp services configured and operational
+
+services:
+  # DCS-1: mem0-mcp service configuration
+  # Service name: mem0-mcp
+  # Image: mem0-mcp-server:latest
+  # Ports: 8050:8050
+  # Volumes: ./config:/app/config
+  # Restart: unless-stopped
+  # Healthcheck: configured
+  mem0-mcp:
+    image: mem0-mcp-server:latest
+    container_name: mem0-mcp
+    depends_on:
+      ollama-qwen3-embedding:
+        condition: service_healthy
+      ollama-qwen:
+        condition: service_healthy
+    ports:
+      - "8050:8050"
+    volumes:
+      - ./config:/app/config
+      - ./scripts:/scripts
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - DEFAULT_USER_ID=${DEFAULT_USER_ID:-default_user}
+      - DEFAULT_AGENT_ID=${DEFAULT_AGENT_ID:-default_agent}
+      - DEFAULT_APP_ID=${DEFAULT_APP_ID:-default_app}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8050/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - mem0-network
+    entrypoint: ["/bin/bash", "/scripts/wait-for-ollama.sh"]
+
+  # DCS-2: Ollama service for embedding model qwen3-embedding:8b
+  # Dual Ollama Setup Rationale:
+  # Each Ollama instance is optimized for its model type's context length requirements.
+  # - ollama-qwen3-embedding: Runs qwen3-embedding:8b with 32768 context (embedding model, max 32k tokens)
+  # - ollama-qwen: Runs qwen2.5:7b with 32768 context (chat model, supports 32k context)
+  # This prevents the "requested context size too large" warning when models share context settings.
+  # Mem0 uses separate Ollama endpoints for LLM (chat) and embedder (embeddings) operations.
+
+  ollama-qwen3-embedding:
+    image: ollama/ollama:0.23.1
+    container_name: ollama-qwen3-embedding
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./models:/root/.ollama
+    restart: unless-stopped
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - OLLAMA_MAX_LOADED_MODELS=2
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_CONTEXT_LENGTH=32768
+    networks:
+      - mem0-network
+    healthcheck:
+      test: ["CMD-SHELL", "bash", "-c", "{ printf 'GET / HTTP/1.0\r\n\r\n'; cat } </dev/tcp/localhost/11434 | grep -q 'Ollama is running'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  ollama-qwen:
+    image: ollama/ollama:0.23.1
+    container_name: ollama-qwen
+    ports:
+      - "11435:11434"
+    volumes:
+      - ./models:/root/.ollama
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - OLLAMA_MAX_LOADED_MODELS=1
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_CONTEXT_LENGTH=32768
+    networks:
+      - mem0-network
+    healthcheck:
+      test: ["CMD-SHELL", "bash", "-c", "{ printf 'GET / HTTP/1.0\r\n\r\n'; cat } </dev/tcp/localhost/11434 | grep -q 'Ollama is running'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+# Network configuration for service communication
+networks:
+  mem0-network:
+    driver: bridge
+
+# Volume configuration for persistent data (models volume defined in ollama-mem0 service)

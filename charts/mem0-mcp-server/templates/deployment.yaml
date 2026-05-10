@@ -1,0 +1,111 @@
+# Kubernetes deployment template for mem0-mcp-server
+# FR-HELM-1: Helm chart with proper templates and values schema
+# Resource limits: limits_cpus=1, limits_memory=1Gi, requests_cpus=0.5, requests_memory=512Mi
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mem0-mcp-server.fullname" . }}
+  labels:
+    {{- include "mem0-mcp-server.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "mem0-mcp-server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mem0-mcp-server.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "mem0-mcp-server.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          env:
+            - name: LOG_LEVEL
+              value: {{ .Values.env.LOG_LEVEL | quote }}
+            - name: REDIS_URL
+              value: {{ .Values.env.REDIS_URL | quote }}
+            - name: CHROMA_DATA_SIZE
+              value: {{ .Values.persistence.chroma.size | quote }}
+            - name: NEO4J_DATA_SIZE
+              value: {{ .Values.persistence.neo4j.size | quote }}
+            - name: MINIO_DATA_SIZE
+              value: {{ .Values.persistence.minio.size | quote }}
+          {{- with .Values.health.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.health.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 10 }}
+          volumeMounts:
+            - name: chroma-data
+              mountPath: /data/chroma
+            - name: neo4j-data
+              mountPath: /data/neo4j
+            - name: minio-data
+              mountPath: /data/minio
+      volumes:
+        - name: chroma-data
+          persistentVolumeClaim:
+            claimName: {{ include "mem0-mcp-server.fullname" . }}-chroma
+        - name: neo4j-data
+          persistentVolumeClaim:
+            claimName: {{ include "mem0-mcp-server.fullname" . }}-neo4j
+        - name: minio-data
+          persistentVolumeClaim:
+            claimName: {{ include "mem0-mcp-server.fullname" . }}-minio
+---
+# PersistentVolumeClaim for Chroma data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "mem0-mcp-server.fullname" . }}-chroma
+  labels:
+    {{- include "mem0-mcp-server.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.chroma.size }}
+  storageClassName: {{ .Values.persistence.chroma.storageClass }}
+---
+# PersistentVolumeClaim for Neo4j data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "mem0-mcp-server.fullname" . }}-neo4j
+  labels:
+    {{- include "mem0-mcp-server.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.neo4j.size }}
+  storageClassName: {{ .Values.persistence.neo4j.storageClass }}
+---
+# PersistentVolumeClaim for MinIO data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "mem0-mcp-server.fullname" . }}-minio
+  labels:
+    {{- include "mem0-mcp-server.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.minio.size }}
+  storageClassName: {{ .Values.persistence.minio.storageClass }}

@@ -1,0 +1,31 @@
+{
+  "config_id": "opensearch-vllm",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "opensearch",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1024,
+    "opensearch_host": "search-xxx.amazonaws.com",
+    "opensearch_port": 443,
+    "opensearch_user": "admin",
+    "opensearch_password": "your-password",
+    "opensearch_use_ssl": true,
+    "opensearch_verify_certs": true
+  },
+  "llm": {
+    "provider": "vllm",
+    "model": "your-model-name",
+    "temperature": 0.2,
+    "max_tokens": 2000,
+    "vllm_base_url": "http://localhost:8000/v1"
+  },
+  "embedder": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "dimension": 1024
+  }
+}

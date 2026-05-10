@@ -1,0 +1,32 @@
+{
+  "config_id": "chroma-sentence-transformer-reranker",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "chroma",
+    "collection_name": "mem0",
+    "path": "./chroma_db"
+  },
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "temperature": 0.2,
+    "max_tokens": 2000
+  },
+  "embedder": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "dimension": 1536
+  },
+  "reranker": {
+    "provider": "sentence_transformer",
+    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "device": "cuda",
+    "top_k": 10,
+    "enabled": true,
+    "batch_size": 32
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "config_id": "s3-vectors",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "s3_vectors",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "s3_vectors_bucket": "your-vector-bucket-name",
+    "s3_vectors_region": "us-east-1"
+  },
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "temperature": 0.2,
+    "max_tokens": 2000
+  },
+  "embedder": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "dimension": 1536
+  }
+}

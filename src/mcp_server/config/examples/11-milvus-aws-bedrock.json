@@ -1,0 +1,29 @@
+{
+  "config_id": "milvus-aws-bedrock",
+  "memory_expiry": 3600,
+  "logging_level": "INFO",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "transport": "sse",
+  "vector_store": {
+    "provider": "milvus",
+    "collection_name": "mem0",
+    "embedding_model_dims": 1536,
+    "milvus_url": "https://xxx.zilliz.com",
+    "milvus_token": "your-zilliz-token",
+    "milvus_db_name": "default",
+    "milvus_metric_type": "L2"
+  },
+  "llm": {
+    "provider": "aws_bedrock",
+    "model": "anthropic.claude-3-5-sonnet-20240620-v1:0",
+    "temperature": 0.2,
+    "max_tokens": 2000,
+    "aws_region": "us-east-1"
+  },
+  "embedder": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "dimension": 1536
+  }
+}

@@ -55,7 +55,7 @@ async def main(
         effective_host = host or settings.host or "0.0.0.0"
         effective_port = port or settings.port or 8050
 
-        mcp.settings = settings
+        mcp._settings = settings
 
         await run_transport(
             transport=effective_transport,

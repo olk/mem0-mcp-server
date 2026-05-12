@@ -11,7 +11,7 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from fastmcp import Context, FastMCP
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 
 if TYPE_CHECKING:
     from fastmcp import FastMCP
@@ -197,10 +197,10 @@ def register_add_memory_tool(mcp: "FastMCP") -> None:
             results_list = result.get("results", []) if isinstance(result, dict) else []
             memory_results = [
                 MemoryResult(
-                    id=r.get("id", ""),
-                    memory=r.get("memory", ""),
-                    metadata=r.get("metadata"),
-                    event=r.get("event", "ADD"),
+                    id=r.get("id", "") if isinstance(r, dict) else str(r) if r else "",
+                    memory=r.get("memory", "") if isinstance(r, dict) else str(r) if r else "",
+                    metadata=r.get("metadata") if isinstance(r, dict) else None,
+                    event=r.get("event", "ADD") if isinstance(r, dict) else "ADD",
                 )
                 for r in results_list
             ]

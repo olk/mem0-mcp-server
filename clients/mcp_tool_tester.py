@@ -66,7 +66,7 @@ async def code_reasoning_test(session: ClientSession) -> dict[str, Any]:
     })
 
     results_list = result.get("results", []) if isinstance(result, dict) else []
-    memory_id = results_list[0].get("id", "") if results_list else ""
+    memory_ids = [r.get("id", "") for r in results_list if r.get("id")]
 
     search_result = await call_tool_json(session, "search_memories", {
         "query": "binary search algorithm time complexity",
@@ -77,16 +77,17 @@ async def code_reasoning_test(session: ClientSession) -> dict[str, Any]:
     results = search_result.get('results', [])
     logger.info(f"Search found {len(results)} results")
 
-    if memory_id:
+    for mid in memory_ids:
         await call_tool_json(session, "delete_memory", {
-            "memory_id": memory_id,
+            "memory_id": mid,
         })
 
     return {
         "test": "code_reasoning",
-        "memory_id": memory_id,
+        "memory_id": memory_ids[0] if memory_ids else "",
+        "memory_ids": memory_ids,
         "search_results_count": len(results),
-        "success": "error" not in result and bool(memory_id),
+        "success": "error" not in result and bool(memory_ids),
         "results": results
     }
 
@@ -114,7 +115,7 @@ async def exa_code_search_test(session: ClientSession) -> dict[str, Any]:
     })
 
     results_list = result.get("results", []) if isinstance(result, dict) else []
-    memory_id = results_list[0].get("id", "") if results_list else ""
+    memory_ids = [r.get("id", "") for r in results_list if r.get("id")]
 
     search_result = await call_tool_json(session, "search_memories", {
         "query": "REST API authentication JWT OAuth2",
@@ -131,14 +132,15 @@ async def exa_code_search_test(session: ClientSession) -> dict[str, Any]:
     search_memories = search_result.get('results', [])
     logger.info(f"Found {len(memories)} total memories")
 
-    if memory_id:
+    for mid in memory_ids:
         await call_tool_json(session, "delete_memory", {
-            "memory_id": memory_id,
+            "memory_id": mid,
         })
 
     return {
         "test": "exa_code_search",
-        "memory_id": memory_id,
+        "memory_id": memory_ids[0] if memory_ids else "",
+        "memory_ids": memory_ids,
         "search_results_count": len(search_memories),
         "total_memories": len(memories),
         "success": "error" not in result,
@@ -169,31 +171,33 @@ async def context7_test(session: ClientSession) -> dict[str, Any]:
     })
 
     results_list = result.get("results", []) if isinstance(result, dict) else []
-    memory_id = results_list[0].get("id", "") if results_list else ""
+    memory_ids = [r.get("id", "") for r in results_list if r.get("id")]
 
-    if memory_id:
+    if memory_ids:
         get_result = await call_tool_json(session, "get_memory", {
-            "memory_id": memory_id,
+            "memory_id": memory_ids[0],
         })
 
         update_result = await call_tool_json(session, "update_memory", {
-            "memory_id": memory_id,
+            "memory_id": memory_ids[0],
             "content": context7_content + " Added: Supports stdio and SSE transports.",
         })
 
         logger.info(f"Updated memory: {update_result.get('status', 'unknown')}")
 
         get_after_update = await call_tool_json(session, "get_memory", {
-            "memory_id": memory_id,
+            "memory_id": memory_ids[0],
         })
 
-        await call_tool_json(session, "delete_memory", {
-            "memory_id": memory_id,
-        })
+        for mid in memory_ids:
+            await call_tool_json(session, "delete_memory", {
+                "memory_id": mid,
+            })
 
         return {
             "test": "context7",
-            "memory_id": memory_id,
+            "memory_id": memory_ids[0],
+            "memory_ids": memory_ids,
             "get_success": "error" not in get_result,
             "update_success": "error" not in update_result,
             "delete_success": True,

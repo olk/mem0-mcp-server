@@ -12,6 +12,7 @@ import logging
 import threading
 
 from fastmcp import FastMCP
+from fastmcp.server.transforms import PromptsAsTools
 
 from mcp_server.lifespan import server_lifespan
 
@@ -81,5 +82,7 @@ def reset_mcp_instance() -> None:
 # Create the single FastMCP instance (IC-2, IC-5)
 # All @mcp.tool decorators in tools/ module bind to this instance
 mcp: FastMCP = get_mcp_instance()
+
+mcp.add_transform(PromptsAsTools(mcp))
 
 __all__ = ["mcp", "get_mcp_instance", "reset_mcp_instance"]

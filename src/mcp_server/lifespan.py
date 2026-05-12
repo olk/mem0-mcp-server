@@ -21,12 +21,43 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from fastmcp import FastMCP
 
+from anyio import ClosedResourceError
 from fastmcp.server.lifespan import lifespan
+from starlette.types import Receive, Scope, Send
 
 from mcp_server.memory.manager import Mem0InitializationError
 
 # Cleanup timeout in seconds - NFR-5: MTTR < 5 minutes
 CLEANUP_TIMEOUT_SECONDS = 300
+
+
+def _patch_sse_handle_post_message() -> None:
+    """Patch SseServerTransport.handle_post_message to handle ClosedResourceError gracefully.
+
+    When an SSE client's connection drops before the server can send the response,
+    the server raises ClosedResourceError. This patch catches that exception and logs
+    a warning instead of crashing the server.
+
+    This is a known issue in mcp library <= 1.27.0 where handle_post_message
+    doesn't handle the case when a session's write stream is closed.
+    """
+    from mcp.server.sse import SseServerTransport
+
+    _original_handle_post_message = SseServerTransport.handle_post_message
+
+    async def _safe_handle_post_message(
+        self: SseServerTransport, scope: Scope, receive: Receive, send: Send
+    ) -> None:
+        try:
+            await _original_handle_post_message(self, scope, receive, send)
+        except ClosedResourceError:
+            logging.warning(
+                "SSE session write stream closed before response could be sent. "
+                "Client may have disconnected prematurely.",
+                extra={"logging_context": ["sse", "transport", "client_disconnect"]}
+            )
+
+    SseServerTransport.handle_post_message = _safe_handle_post_message
 
 
 async def _cleanup_with_timeout(memory_lifespan_result: dict) -> None:
@@ -103,6 +134,8 @@ async def server_lifespan(server: "FastMCP"):
             f"MemoryManager initialized: {type(manager).__name__}",
             extra={"logging_context": ["startup", "initialization"]}
         )
+
+        _patch_sse_handle_post_message()
 
         try:
             yield memory_lifespan_result

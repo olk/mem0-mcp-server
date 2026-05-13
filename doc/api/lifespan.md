@@ -70,13 +70,13 @@ Server Startup
      │
      ▼
 ┌─────────────────────────────────┐
-│   Yield memory/manager to      │
+│   Yield memory/manager to       │
 │   FastMCP request handlers      │
 └─────────────────────────────────┘
      │
      ▼ Server Shutdown
 ┌─────────────────────────────────┐
-│   _cleanup_with_timeout()      │
+│   _cleanup_with_timeout()       │
 │   - aclose AsyncMemory          │
 │   - 300s timeout enforcement    │
 └─────────────────────────────────┘

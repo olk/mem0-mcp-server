@@ -56,6 +56,44 @@ This guide covers complex scenarios and advanced configurations.
 }
 ```
 
+### Local OpenAI-Compatible (LM Studio, vLLM, Ollama)
+
+```json
+{
+  "llm": {
+    "provider": "ollama",
+    "config": {
+      "model": "local-model-name",
+      "temperature": 0.2,
+      "max_tokens": 2000,
+      "lmstudio_base_url": "http://localhost:1234/v1"
+    }
+  },
+  "embedder": {
+    "provider": "ollama",
+    "config": {
+      "model": "nomic-embed-text",
+      "dimension": 1536,
+      "lmstudio_base_url": "http://localhost:1234/v1"
+    }
+  }
+}
+```
+
+```json
+{
+  "llm": {
+    "provider": "vllm",
+    "config": {
+      "model": "your-model-name",
+      "temperature": 0.2,
+      "max_tokens": 2000,
+      "vllm_base_url": "http://localhost:8000/v1"
+    }
+  }
+}
+```
+
 ## Vector Store Configuration
 
 ### Redis (Default)

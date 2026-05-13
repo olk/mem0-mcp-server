@@ -75,6 +75,25 @@ export MCP_TRANSPORT=stdio
 uv run python -m mcp_server.main
 ```
 
+### OpenCode Configuration
+
+In `~/config/opencode/opencode.json`
+
+
+### OpenCode Configuration
+
+In `~/config/opencode/opencode.json`
+
+```json
+	"mcp": {
+		"mem0": {
+			"type": "remote",
+			"enabled": true,
+			"url": "http://localhost:8050/sse"
+		}
+    }
+
+```
 ## MCP Tools
 
 | Tool | Description |
@@ -108,9 +127,9 @@ result = await client.call_tool("search_memories", {
 ```
 AI Agent → FastMCP Server → MemoryManager → Mem0 AsyncMemory → Redis
               │                                  │
-              ├── SafeLogger (stdout/stderr)    │
-              ├── Transport (stdio/SSE)        │
-              └── Config (Pydantic validation)  │
+              ├── SafeLogger (stdout/stderr)     │
+              ├── Transport (stdio/SSE)          │
+              └── Config (Pydantic validation)   │
 ```
 
 **Components:**

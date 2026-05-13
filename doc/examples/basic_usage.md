@@ -52,6 +52,37 @@ Create `~/.config/mem0-mcp-server/settings.json`:
 }
 ```
 
+### Local OpenAI-Compatible LLM
+
+For local AI models using LM Studio, vLLM, or similar:
+
+```json
+{
+  "vector_store": {
+    "provider": "redis",
+    "config": {
+      "redis_url": "redis://localhost:6379"
+    }
+  },
+  "llm": {
+    "provider": "lmstudio",
+    "config": {
+      "model": "local-model-name",
+      "temperature": 0.2,
+      "lmstudio_base_url": "http://localhost:1234/v1"
+    }
+  },
+  "embedder": {
+    "provider": "lmstudio",
+    "config": {
+      "model": "nomic-embed-text",
+      "dimension": 1536,
+      "lmstudio_base_url": "http://localhost:1234/v1"
+    }
+  }
+}
+```
+
 ## Quick Start
 
 ### Using SSE Transport (Remote)

@@ -42,9 +42,9 @@ Configuration (TRANSPORT env var / config file)
          │
          ▼
 ┌─────────────────────────────────┐
-│      run_transport()             │
-│   - Validate transport type      │
-│   - Parse to TransportType enum   │
+│     run_transport()             │
+│ - Validate transport type       │
+│ - Parse to TransportType enum   │
 └─────────────────────────────────┘
          │
          ├── "stdio" ──► _run_stdio_transport()

@@ -88,7 +88,7 @@ Configuration
      ▼
 ┌─────────────────────────────────┐
 │   run_transport()               │
-│   - Validate transport type      │
+│   - Validate transport type     │
 │   - Route to appropriate func   │
 └─────────────────────────────────┘
      │
